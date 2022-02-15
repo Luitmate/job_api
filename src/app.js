@@ -5,9 +5,12 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.get('/', (req, res) => {
-    res.send('hola')
-})
+const authRouter = require('./routes/authRouter')
+const jobRouter = require('./routes/jobRouter')
+
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1', jobRouter)
+
 
 const PORT = process.env.PORT || 3000
 
