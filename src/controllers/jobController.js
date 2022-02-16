@@ -3,11 +3,13 @@ const getAllJobs = async (req, res) => {
 }
 
 const getJob = async (req, res) => {
+    
     res.send('all2 jobs')
 }
 
 const createJob = async (req, res) => {
-    res.send('all jobs')
+    console.log('bienvenido!!')
+    res.send('sfsad')
 }
 
 const updateJob = async (req, res) => {
