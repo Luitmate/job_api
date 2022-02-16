@@ -1,11 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../db/config')
 
-class Job extends Model {
-    static associate({ User }) {
-        
-    }
-}
+class Job extends Model {}
 
 Job.init({
     company: {

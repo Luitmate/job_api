@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express')
 const sequelize = require('./db/config')
+require('./db/associations')
 
 const app = express()
 
@@ -21,7 +22,7 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, async(req, res) => {
     console.log(`Serving on port ${PORT}`)
     try {
-        await sequelize.sync();
+        await sequelize.sync({ force: true });
         console.log('Connection has been established successfully.');
       } catch (error) {
         console.error('Unable to connect to the database:', error);
