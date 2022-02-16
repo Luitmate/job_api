@@ -1,9 +1,13 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../db/config')
 
-class User extends Model {}
+class Job extends Model {
+    static associate({ User }) {
+        
+    }
+}
 
-User.init({
+Job.init({
     company: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -33,4 +37,4 @@ User.init({
   underscored: true
 });
 
-module.exports = User
+module.exports = Job
