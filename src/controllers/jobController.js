@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
 const getAllJobs = async (req, res) => {
+    // const jobs = await Job.findAll({
+    //     where: {
+    //         created_by: 
+    //     }
+    // })
     res.send('all1 jobs')
 }
 
@@ -13,12 +18,8 @@ const getJob = async (req, res) => {
 }
 
 const createJob = async (req, res) => {
-    const authHeader = req.headers.authorization
-    const token = authHeader.split(' ')[1]
-    const publisher = jwt.decode(token)
     const { company, position, created_by } = req.body
-    const job = await Job.create({company, position, created_by: publisher})
-    
+    const job = await Job.create({company, position, created_by: req.user.userId})
     res.status(StatusCodes.OK).json({ job })
 }
 

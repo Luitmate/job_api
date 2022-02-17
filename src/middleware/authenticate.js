@@ -12,9 +12,11 @@ const authentication = async(req, res, next) => {
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET)
         const userId = payload.userId
+        const createdBy = jwt.decode(token)
         if(req.body.userId !== userId) {
             throw new UnauthenticatedError('Autenticación inválidaa')
         } else {
+            req.user = { userId: createdBy }
             next()
         }
     } catch(error) {
