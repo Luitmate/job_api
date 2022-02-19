@@ -1,6 +1,8 @@
 require('dotenv').config();
-const express = require('express')
+const express = require('express');
+const { StatusCodes } = require('http-status-codes');
 const sequelize = require('./db/config')
+
 require('./db/associations')
 
 const app = express()
@@ -8,14 +10,26 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-const authenticateUser = require('./middleware/authenticate')
+const authentication = require('./middleware/authenticate')
+const ExpressError = require('./errors/ExpressError')
 
 const authRouter = require('./routes/authRouter')
 const jobRouter = require('./routes/jobRouter')
 
-app.use('/api/v1/auth', authRouter)
-app.use('/api/v1/jobs', authenticateUser, jobRouter)
 
+
+
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/jobs', authentication, jobRouter)
+
+app.all('*', (req, res, next) => {
+  next(new ExpressError('Page not found', StatusCodes.NOT_FOUND))
+})
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message = 'Algo anduvo mal' } = err
+  res.status(statusCode).send(message)
+})
 
 const PORT = process.env.PORT || 3000
 
