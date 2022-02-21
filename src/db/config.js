@@ -6,7 +6,8 @@ const sequelize = new Sequelize(
     {
         ssl: { rejectUnauthorized: false }
         
-    }
+    },
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED
 )
 
 // const sequelize = new Sequelize(
