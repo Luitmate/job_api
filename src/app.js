@@ -31,7 +31,7 @@ app.use(cors())
 app.use(xss())
 
 
-const authenticateUser = require('./middleware/authenticate')
+const authentication = require('./middleware/authenticate')
 
 const authRouter = require('./routes/authRouter')
 const jobRouter = require('./routes/jobRouter')
