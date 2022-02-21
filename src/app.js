@@ -43,6 +43,10 @@ const jobRouter = require('./routes/jobRouter')
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/jobs', authentication, jobRouter)
 
+app.get('/', (req, res) => {
+  res.send('jobs api')
+})
+
 app.all('*', (req, res, next) => {
   next(new ExpressError('Page not found', StatusCodes.NOT_FOUND))
 })
