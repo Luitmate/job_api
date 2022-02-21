@@ -24,7 +24,7 @@ const sequelize = new Sequelize(
         dialect: process.env.DB_DIALECT
     }, {
         ssl: {
-            rejectUnauthorized: true
+            rejectUnauthorized: false
         }
     }
     
