@@ -1,64 +1,88 @@
 const Job = require('../models/Job')
 const { StatusCodes } = require('http-status-codes')
-const { NotFoundError, BadRequestError } = require('../errors')
-const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const { user } = require('pg/lib/defaults')
+const ExpressError = require('../errors/ExpressError')
 
 //byUser
-const getAllJobs = async (req, res) => {
-    const jobs = await Job.findAll({
-        where: {
-            created_by: req.user.userId
-        },
-        order: [
-            ['created_at', 'DESC']
-        ]
-    })
-    res.status(StatusCodes.OK).json({ jobs, count: jobs.length})
+const getAllJobs = async (req, res, next) => {
+    try {
+        const jobs = await Job.findAll({
+            where: {
+                created_by: req.user.userId
+            },
+            order: [
+                ['created_at', 'DESC']
+            ]
+        })
+        res.status(StatusCodes.OK).json({ jobs, count: jobs.length})
+    } catch (error) {
+        next(error)
+    }
 }
 
-const getJob = async (req, res) => {
-    const { id } = req.params
-    const job = await Job.findByPk(id, {
-        include: [{
-            model: User,
-            attributes: ['name']
-        }] 
+const getJob = async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const job = await Job.findByPk(id, {
+            include: [{
+                model: User,
+                attributes: ['name']
+            }] 
     })
-    if(job === null) {
-        throw new NotFoundError(`No se ha encontrado publicaciones con el id ${id}`)
+    if(!job) {
+        throw new ExpressError(`No se ha encontrado publicaciones con el id ${id}`, StatusCodes.NOT_FOUND)
     }
     res.status(StatusCodes.OK).json({job})
-}
-
-const createJob = async (req, res) => {
-    const { company, position, created_by } = req.body
-    const job = await Job.create({company, position, created_by: req.user.userId})
-    res.status(StatusCodes.OK).json({ job })
-}
-
-const updateJob = async (req, res) => {
-    const { company, position } = req.body
-    const { id } = req.params
-    if(company === '' || position === '') {
-        throw new BadRequestError('Los campos company y position no pueden estar vacíos')
+    } catch (error) {
+        next(error)
     }
-    const job = await Job.update({ company, position }, {
-        where: {id}
-    })
-    res.status(StatusCodes.OK).json({ job })
+}
+
+const createJob = async (req, res, next) => {
+    try {
+        const { company, position, created_by } = req.body
+        const job = await Job.create({company, position, created_by: req.user.userId})
+        res.status(StatusCodes.OK).json({ job })
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+const updateJob = async (req, res, next) => {
+    try {
+        const { company, position } = req.body
+        const { id } = req.params
+        if(company === '' || position === '') {
+            throw new ExpressError('Los campos company y position no pueden estar vacíos', StatusCodes.BAD_REQUEST)
+        }
+        const job = await Job.update({ company, position }, {
+            where: {id}
+        })
+        if(!job) {
+            throw new ExpressError(`No se ha encontrado publicaciones con el id ${id}`, StatusCodes.NOT_FOUND)
+        }
+        res.status(StatusCodes.OK).json({ job })
+    } catch (error) {
+        next(error)
+    }
+    
 }
 
 const deleteJob = async (req, res) => {
-    const { id } = req.params
-    const job = await Job.destroy({
-        where: { id }
-    })
-    if(job === null) {
-        throw new NotFoundError(`No se ha encontrado publicaciones con el id ${id}`)
+    try {
+        const { id } = req.params
+        const job = await Job.destroy({
+         where: { id }
+        })
+    if(!job) {
+        throw new NotFoundError(`No se ha encontrado publicaciones con el id ${id}`, StatusCodes.NOT_FOUND)
     }
     res.status(StatusCodes.OK).send({ job })
+    } catch (error) {
+        next(error)    
+    }  
 }
 
 module.exports = {

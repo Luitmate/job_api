@@ -1,6 +1,5 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
-const { UnauthenticatedError } = require('../errors');
 
 const authentication = async(req, res, next) => {
     const authHeader = req.headers.authorization
@@ -14,13 +13,13 @@ const authentication = async(req, res, next) => {
         const userId = payload.userId
         const createdBy = jwt.decode(token)
         if(req.body.userId !== userId) {
-            throw new UnauthenticatedError('Autenticación inválidaa')
+            throw new UnauthenticatedError('Autenticación inválida')
         } else {
             req.user = { userId: createdBy }
             next()
         }
     } catch(error) {
-        throw new UnauthenticatedError('Autenticación inválidaaa')
+        throw new UnauthenticatedError('Autenticación inválida')
     }
 }
 
