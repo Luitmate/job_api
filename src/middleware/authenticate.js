@@ -1,10 +1,11 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken');
+const ExpressError = require('../errors/ExpressError');
 
 const authentication = async(req, res, next) => {
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer')) {
-        throw new UnauthenticatedError('Autenticación inválida')
+        throw new ExpressError('Autenticación inválida')
     }
     const token = authHeader.split(' ')[1]
 
@@ -13,13 +14,13 @@ const authentication = async(req, res, next) => {
         const userId = payload.userId
         const createdBy = jwt.decode(token)
         if(req.body.userId !== userId) {
-            throw new UnauthenticatedError('Autenticación inválida')
+            throw new ExpressError('Autenticación inválida')
         } else {
             req.user = { userId: createdBy }
             next()
         }
     } catch(error) {
-        throw new UnauthenticatedError('Autenticación inválida')
+        throw new ExpressError('Autenticación inválida')
     }
 }
 
